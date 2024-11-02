@@ -1,5 +1,5 @@
 from typer.testing import CliRunner
-from vpm.cli import app
+from vpx.cli import app
 from pathlib import Path
 import pytest
 
@@ -8,7 +8,7 @@ runner = CliRunner()
 def test_version():
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert "vpm v0.1.0" in result.stdout
+    assert "vpx v0.1.0" in result.stdout
 
 def test_hello():
     result = runner.invoke(app, ["hello", "John"])

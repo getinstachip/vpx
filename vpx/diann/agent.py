@@ -8,12 +8,23 @@ from .utility import strip_code_tags, add_braces
 from .tools import Tool, CircuitVisualizer
 import xml.etree.ElementTree as ET
 from io import StringIO
+from ..auth import get_stored_credentials
 
 class Agent:
     def __init__(self, system_prompt: str = "", tools: Dict[str, Tool] = {}, context: str = "", verbose: bool = False, log_history: bool = False):
         load_dotenv()
-        self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        self.license_key = os.getenv("VPX_LICENSE_KEY")
+        if not self.license_key:
+            raise ValueError("VPX_LICENSE_KEY environment variable is required")
+        
+        # Get credentials from stored location
+        try:
+            credentials = get_stored_credentials()
+            self.openai_client = OpenAI(api_key=credentials["openai_api_key"])
+            self.anthropic_client = anthropic.Anthropic(api_key=credentials["anthropic_api_key"])
+        except ValueError as e:
+            raise ValueError("Authentication required. Please run 'vpx login' first")
+        
         self.system_prompt = system_prompt
         self.tools = tools
         self.context = context

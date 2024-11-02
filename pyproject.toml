@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vpx"
+version = "0.1.7"
+description = "VPM with integrated agents"
+authors = [
+    {name = "Instachip", email = "tea@getinstachip.com"}
+]
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "anthropic==0.38.0",
+    "openai==1.53.0",
+    "typer==0.12.5",
+    "python-dotenv==1.0.1",
+    "cairosvg==2.7.1",
+    "networkx==3.4.2",
+]
+
+[project.scripts]
+vpx = "vpx.cli:app"
+
+[tool.setuptools.packages]
+find = {}
