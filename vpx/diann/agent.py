@@ -13,9 +13,6 @@ from ..auth import get_stored_credentials
 class Agent:
     def __init__(self, system_prompt: str = "", tools: Dict[str, Tool] = {}, context: str = "", verbose: bool = False, log_history: bool = False):
         load_dotenv()
-        self.license_key = os.getenv("VPX_LICENSE_KEY")
-        if not self.license_key:
-            raise ValueError("VPX_LICENSE_KEY environment variable is required")
         
         # Get credentials from stored location
         try:
