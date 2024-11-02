@@ -1,0 +1,41 @@
+PARALLEL OPERATION EXAMPLE (Half Adder):
+Clock     |‾|_|‾|_|‾|_|‾|_|
+a         |0|0|1|1|0|1|1|0|  <-- Input A pattern
+b         |0|1|0|1|0|0|1|1|  <-- Input B pattern
+sum       |0|1|1|0|0|1|0|1|  <-- A XOR B result
+carry     |0|0|0|1|0|0|1|0|  <-- A AND B result
+
+DETAILED TIMING SEQUENCE:
+Clock     |‾|_|‾|_|‾|_|‾|_|
+a         |0|0|1|1|0|1|1|0|
+b         |0|1|0|1|0|0|1|1|
+sum       |0|1|1|0|0|1|0|1|
+carry     |0|0|0|1|0|0|1|0|
+         |A|B|C|D|E|F|G|H|
+
+WHAT HAPPENS AT EACH CYCLE:
+A: Initial state (0,0) -> sum=0, carry=0
+B: (0,1) -> sum=1 (inputs differ), carry=0
+C: (1,0) -> sum=1 (inputs differ), carry=0
+D: (1,1) -> sum=0 (inputs same), carry=1
+E: (0,0) -> sum=0 (inputs same), carry=0
+F: (1,0) -> sum=1 (inputs differ), carry=0
+G: (1,1) -> sum=0 (inputs same), carry=1
+H: (0,1) -> sum=1 (inputs differ), carry=0
+
+CRITICAL TIMING RULES:
+1. Pure combinational logic - no clock required
+2. Output changes occur after input propagation delay
+3. XOR gate delay determines sum timing
+4. AND gate delay determines carry timing
+5. Both outputs update simultaneously based on inputs
+
+PROPAGATION ORDER:
+1. Input changes arrive (a and b)
+2. Gates process new input values:
+   - XOR computes sum
+   - AND computes carry
+3. Outputs update after gate delays
+4. No state storage or feedback paths
+
+Note: Unlike sequential logic, half adder has no memory elements or state. Outputs depend solely on current input values with only gate propagation delays to consider.

@@ -1,0 +1,40 @@
+<thinking>
+A half adder performs single-bit binary addition with two inputs, producing a sum and carry output.
+
+1. Data persistence analysis:
+- No storage elements needed as this is combinational logic
+- Outputs depend only on current inputs
+
+2. Operation analysis:
+- Sum: XOR of inputs (1 when inputs are different)
+- Carry: AND of inputs (1 when both inputs are 1)
+
+3. Data flow:
+- Two inputs A and B feed into:
+  * XOR gate for sum
+  * AND gate for carry
+- No feedback paths or dependencies between operations
+
+4. Dependencies:
+- No register dependencies as this is purely combinational
+- Sum and carry are independent parallel operations
+</thinking>
+
+<answer>
+INPUTS:
+- a: Single bit input
+- b: Single bit input
+
+OUTPUTS:
+- sum: A XOR B (1 when inputs differ)
+- carry: A AND B (1 when both inputs are 1)
+
+OPERATIONS:
+1. Sum generation:
+   - XOR operation between a and b
+   
+2. Carry generation:
+   - AND operation between a and b
+
+No storage elements required - purely combinational logic
+</answer>

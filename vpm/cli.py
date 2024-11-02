@@ -1,7 +1,7 @@
 from typing import Optional
 import typer
 from . import __app_name__, __version__
-
+from .diann.helper_agents import Diann
 app = typer.Typer()
 
 def _version_callback(value: bool) -> None:
@@ -23,24 +23,12 @@ def main(
     return
 
 @app.command()
-def hello(
-    name: str = typer.Argument(..., help="The name of the person to greet"),
+def implement(
+    prompt: str = typer.Argument(..., help="The prompt to run DIANN with"),
 ) -> None:
-    """Greet someone by name."""
-    typer.echo(f"Hello {name}")
-
-@app.command()
-def goodbye(
-    name: str = typer.Argument(..., help="The name of the person to bid farewell"),
-    formal: bool = typer.Option(
-        False,
-        "--formal",
-        "-f",
-        help="Use formal farewell message"
-    ),
-) -> None:
-    """Say goodbye to someone."""
-    if formal:
-        typer.echo(f"Goodbye Mr. {name}. Have a good day.")
-    else:
-        typer.echo(f"Bye {name}!") 
+    diann = Diann(
+        solution_folder="solutions",
+        specification=prompt,
+        verbose=True
+    )
+    diann.run()
