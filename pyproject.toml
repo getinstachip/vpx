@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vpx"
-version = "0.1.15"
+version = "0.1.17"
 description = "VPM with integrated agents"
 authors = [
     {name = "Instachip", email = "tea@getinstachip.com"}

@@ -83,7 +83,7 @@ Output in <answer> tags. Give only the interface, no other text."""
             streaming=True,
             temperature=0.2
         )
-        self._write_output("module_interface.txt", response)
+        # self._write_output("module_interface.txt", response)
         return self._extract_answer(response)
 
     def _analyze_components(self) -> str:
@@ -121,7 +121,7 @@ Do not implement the module and do not include any other text."""
             streaming=True,
             temperature=0.3
         )
-        self._write_output("components.txt", response)
+        # self._write_output("components.txt", response)
         return self._extract_answer(response)
 
     def _analyze_timing_requirements(self) -> str:
@@ -194,7 +194,7 @@ Generate similar timing analysis for the given specification, maintaining exact 
             streaming=True,
             temperature=0.3
         )
-        self._write_output("timing_prerefined.txt", response)
+        # self._write_output("timing_prerefined.txt", response)
         return self._extract_answer(response)
 
     def _verify_timing_plan(self, timing: str) -> str:
@@ -374,7 +374,7 @@ Fix any issues found. Place verified FSM in <answer> tags."""
             fsm = self._verify_and_fix_fsm(fsm)
             self.context.fsm_plan.state_info = fsm
             
-        self._write_output("fsm_final.txt", fsm)
+        # self._write_output("fsm_final.txt", fsm)
         return fsm
 
     def _plan_output_logic(self) -> str:
@@ -407,7 +407,7 @@ output2 = (state == STATE2 || state == STATE3)"""
             temperature=0.5
         )
         self.context.fsm_plan.output_logic = self._extract_answer(response)
-        self._write_output("output_logic.txt", response)
+        # self._write_output("output_logic.txt", response)
         return self._extract_answer(response)
 
     def analyze_timing(self) -> str:
@@ -422,7 +422,7 @@ output2 = (state == STATE2 || state == STATE3)"""
             self.context.timing_plan.register_deps = sections[1] 
             self.context.timing_plan.critical_paths = sections[2]
         
-        self._write_output("timing_final.txt", verified_timing)
+        # self._write_output("timing_final.txt", verified_timing)
         return verified_timing
 
     def analyze_requirements(self) -> DesignContext:
@@ -450,7 +450,7 @@ output2 = (state == STATE2 || state == STATE3)"""
             self.context.requirements.fsm or ""
         ])
             
-        self._write_output("requirements.txt", combined)
+        # self._write_output("requirements.txt", combined)
         return self.context
 
     def _extract_answer(self, response: str) -> str:
@@ -810,32 +810,29 @@ class Diann(Agent):
         # 2. Generate RTL
         self.coder = DesignCoder(self.context, self.verbose)
         rtl = self.coder.generate_rtl() if self.planner.needs_fsm else self.coder.call_zero_shot()
-        self._write_output("rtl_preverified.sv", rtl)
+        final_rtl = rtl
         
         # 3. Verify the design
-        self.verifier = DesignVerifier(self.context, self.verbose)
-        final_rtl = self.verifier.verify_rtl_timing()
+        # self.verifier = DesignVerifier(self.context, self.verbose)
+        # final_rtl = self.verifier.verify_rtl_timing()
         
         # 4. Save the result
         self.save_rtl(final_rtl)
         return final_rtl
 
-    def save_rtl(self, rtl: str) -> None:
-        # Extract timing diagram for comments if available
-        timing_comment = ""
-        if self.context.timing_plan and self.context.timing_plan.cycle_diagram:
-            timing_comment = "// Timing Diagram:\n//" + self.context.timing_plan.cycle_diagram.replace("\n", "\n//") + "\n"
+    def save_rtl(self, rtl_code: str = None) -> None:             
+        module_name = ""
+        if rtl_code:
+            match = re.search(r'module\s+(\w+)', rtl_code)
+            if match:
+                module_name = match.group(1)
         
-        # Clean up the RTL code
-        rtl_code = rtl.strip()
-        rtl_code = re.sub(r'^```\w*\n', '', rtl_code)
-        rtl_code = re.sub(r'\n```$', '', rtl_code)
-        
-        # Save with timing comments
-        os.makedirs("rtl", exist_ok=True)
-        with open(os.path.join(self.solution_folder, "TopModule.sv"), "w") as f:
-            f.write(timing_comment + rtl_code)
-
+        if not module_name:
+            module_name = "TopModule"
+            
+        with open(os.path.join("vpx_outputs", f"{module_name}.sv"), "w") as f:
+            f.write(rtl_code)
+            
     def _write_output(self, filename: str, content: str) -> None:
         filepath = os.path.join(self.run_dir, filename)
         with open(filepath, "w") as f:
@@ -847,25 +844,6 @@ class Diann(Agent):
         if start != -1 and end != -1:
             return response[start + 8:end].strip()
         return response
-
-    def save_rtl(self) -> None:
-        with open(os.path.join(self.run_dir, "rtl.sv"), "r") as f:
-            rtl_content = f.read()
-            
-        match = re.search(r'<answer>(.*?)</answer>', rtl_content, re.DOTALL)
-        if match:
-            rtl_code = match.group(1).strip()
-            rtl_code = re.sub(r'^```\w*\n', '', rtl_code)
-            rtl_code = re.sub(r'\n```$', '', rtl_code)
-         
-        if self.context.timing_plan and self.context.timing_plan.cycle_diagram:
-            timing_comment = "// Timing Diagram:\n//" + self.context.timing_plan.cycle_diagram.replace('\n', '\n//') + "\n"
-            rtl_code = timing_comment + rtl_code
-             
-        os.makedirs("rtl", exist_ok=True)
-        with open(os.path.join(self.solution_folder, "TopModule.sv"), "w") as f:
-            f.write(rtl_code)
-            
         
 class WiringAgent(Agent):
     def __init__(self, module_a: Dict[str, Any], module_b: Dict[str, Any], context: str = "", verbose: bool = False, openai_api_key: str = "", anthropic_api_key: str = ""):
