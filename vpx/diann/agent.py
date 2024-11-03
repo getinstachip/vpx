@@ -1,4 +1,3 @@
-import os
 from typing import List, Dict, Any, Callable, Union
 from openai import OpenAI
 import anthropic
@@ -8,13 +7,13 @@ from .tools import Tool, CircuitVisualizer
 import xml.etree.ElementTree as ET
 from io import StringIO
 from dotenv import load_dotenv
+from vpx.secretload import get_openai_key, get_anthropic_key
 
 class Agent:
-    def __init__(self, system_prompt: str = "", tools: Dict[str, Tool] = {}, context: str = "", verbose: bool = False, log_history: bool = False, openai_api_key: str = "", anthropic_api_key: str = ""):
+    def __init__(self, system_prompt: str = "", tools: Dict[str, Tool] = {}, context: str = "", verbose: bool = False, log_history: bool = False):
         try:
-            # Initialize API clients with provided keys
-            self.openai_client = OpenAI(api_key=openai_api_key)
-            self.anthropic_client = anthropic.Anthropic(api_key=anthropic_api_key)
+            self.openai_client = OpenAI(api_key=get_openai_key())
+            self.anthropic_client = anthropic.Anthropic(api_key=get_anthropic_key())
         except Exception as e:
             raise ValueError(f"Failed to initialize API clients: {str(e)}")
         

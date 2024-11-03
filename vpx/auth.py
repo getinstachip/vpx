@@ -7,21 +7,17 @@ from functools import wraps
 import typer
 
 def get_netrc_path() -> Path:
-    """Get the path to the .netrc file."""
     return Path.home() / ('.netrc' if os.name != 'nt' else '_netrc')
 
 def store_credentials(email: str, key: str) -> None:
-    """Store credentials in the .netrc file."""
     netrc_path = get_netrc_path()
     
-    # Read existing netrc content
     try:
         existing_netrc = netrc(str(netrc_path))
         entries = existing_netrc.hosts
     except (FileNotFoundError, NetrcParseError):
         entries = {}
 
-    # Update or add new credentials
     with open(netrc_path, 'w') as netrc_file:
         for machine, auth in entries.items():
             if machine != 'api.getinstachip.com':  # Preserve other entries
@@ -32,17 +28,14 @@ def store_credentials(email: str, key: str) -> None:
                     netrc_file.write(f'account {account}\n')
                 netrc_file.write(f'password {password}\n')
         
-        # Add our service credentials
         netrc_file.write(f'machine api.getinstachip.com\n')
         netrc_file.write(f'login {email}\n')
         netrc_file.write(f'password {key}\n')
     
-    # Set appropriate file permissions
     if os.name != 'nt':  # Unix-like systems
         os.chmod(netrc_path, 0o600)
 
 def get_stored_credentials() -> Optional[Dict[str, str]]:
-    """Get stored credentials from .netrc if they exist."""
     try:
         nrc = netrc(str(get_netrc_path()))
         auth = nrc.authenticators('api.getinstachip.com')
@@ -60,7 +53,6 @@ def authenticate_user(email: str, license_key: str) -> Dict:
     return credentials
 
 def verify_license(license_key: str) -> Dict:
-    """Verify license key with authentication server."""
     response = requests.post(
         'https://getinstachip.com/api/auth',
         json={'license_key': license_key}
@@ -73,7 +65,6 @@ def verify_license(license_key: str) -> Dict:
     return response.json()
 
 def logout_user() -> None:
-    """Clear stored credentials from .netrc file."""
     netrc_path = get_netrc_path()
     if not netrc_path.exists():
         return
@@ -84,7 +75,6 @@ def logout_user() -> None:
     except NetrcParseError:
         entries = {}
     
-    # Rewrite netrc file without our service entry
     with open(netrc_path, 'w') as netrc_file:
         for machine, auth in entries.items():
             if machine != 'api.getinstachip.com':
@@ -96,7 +86,6 @@ def logout_user() -> None:
                 netrc_file.write(f'password {password}\n')
 
 def require_auth(f):
-    """Decorator to require authentication before running a command"""
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
