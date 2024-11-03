@@ -10,10 +10,10 @@ def test_version():
     assert result.exit_code == 0
     assert "vpx v0.1.0" in result.stdout
 
-def test_hello():
-    result = runner.invoke(app, ["hello", "John"])
+def test_login():
+    result = runner.invoke(app, ["login"])
     assert result.exit_code == 0
-    assert "Hello John" in result.stdout
+    assert "Login successful" in result.stdout
 
 def test_goodbye():
     result = runner.invoke(app, ["goodbye", "John"])

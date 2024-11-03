@@ -6,8 +6,11 @@ import os
 from . import __app_name__, __version__
 from .diann.helper_agents import Diann
 from .auth import authenticate_user, get_stored_credentials, logout_user, require_auth
+from .secretload import load_keys
+from .auth import verify_license
 
 app = typer.Typer()
+api_keys = load_keys()
 
 def _version_callback(value: bool) -> None:
     if value:
@@ -32,10 +35,18 @@ def main(
 def implement(
     prompt: str = typer.Argument(..., help="The prompt to run implementation with"),
 ) -> None:
+    # Verify license first
+    creds = get_stored_credentials()
+    if not verify_license(creds['license_key']):
+        typer.echo("Invalid license key. Please check your credentials.", err=True)
+        raise typer.Exit(1)
+
     diann = Diann(
         solution_folder="solutions",
         specification=prompt,
-        verbose=True
+        verbose=True,
+        openai_api_key=api_keys['OPENAI_API_KEY'],
+        anthropic_api_key=api_keys['ANTHROPIC_API_KEY']
     )
     diann.run()
 

@@ -10,12 +10,11 @@ from io import StringIO
 from dotenv import load_dotenv
 
 class Agent:
-    def __init__(self, system_prompt: str = "", tools: Dict[str, Tool] = {}, context: str = "", verbose: bool = False, log_history: bool = False):
-        load_dotenv()
-
+    def __init__(self, system_prompt: str = "", tools: Dict[str, Tool] = {}, context: str = "", verbose: bool = False, log_history: bool = False, openai_api_key: str = "", anthropic_api_key: str = ""):
         try:
-            self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-            self.anthropic_client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
+            # Initialize API clients with provided keys
+            self.openai_client = OpenAI(api_key=openai_api_key)
+            self.anthropic_client = anthropic.Anthropic(api_key=anthropic_api_key)
         except Exception as e:
             raise ValueError(f"Failed to initialize API clients: {str(e)}")
         

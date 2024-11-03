@@ -5,7 +5,6 @@ from typing import Dict, Optional
 from netrc import netrc, NetrcParseError
 from functools import wraps
 import typer
-from .secretload import load_keys
 
 def get_netrc_path() -> Path:
     """Get the path to the .netrc file."""
@@ -37,8 +36,6 @@ def store_credentials(email: str, key: str) -> None:
         netrc_file.write(f'machine api.getinstachip.com\n')
         netrc_file.write(f'login {email}\n')
         netrc_file.write(f'password {key}\n')
-
-    load_keys()
     
     # Set appropriate file permissions
     if os.name != 'nt':  # Unix-like systems
@@ -58,19 +55,22 @@ def get_stored_credentials() -> Optional[Dict[str, str]]:
     return None
 
 def authenticate_user(email: str, license_key: str) -> Dict:
-    """Verify license key and store credentials."""
+    credentials = verify_license(license_key)
+    store_credentials(email, license_key)
+    return credentials
+
+def verify_license(license_key: str) -> Dict:
+    """Verify license key with authentication server."""
     response = requests.post(
         'https://getinstachip.com/api/auth',
         json={'license_key': license_key}
     )
-    
+
     if response.status_code != 200:
         error_message = response.json().get('error', 'Unknown error')
         raise ValueError(f'Invalid license key: {error_message}')
-        
-    credentials = response.json()
-    store_credentials(email, license_key)
-    return credentials
+    
+    return response.json()
 
 def logout_user() -> None:
     """Clear stored credentials from .netrc file."""
