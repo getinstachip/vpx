@@ -1,4 +1,3 @@
-from cairosvg import svg2png
 import networkx as nx
 # from sv_parser import parse_sv
 from typing import List
@@ -513,15 +512,15 @@ class CircuitVisualizer(Tool):
         print(f"Circuit diagram SVG saved to {svg_file_path}")
         return svg
 
-    def svg_to_png(self, svg_code: str):
-        svg2png(bytestring=svg_code, write_to="states/circuit_diagram.png", background_color='white')
+    # def svg_to_png(self, svg_code: str):
+    #     svg2png(bytestring=svg_code, write_to="states/circuit_diagram.png", background_color='white')
         
     def run(self):
         self.refresh_circuit(self.circuit_fpath)
         svg: str = self.to_svg()
         print(svg)
         # emit('circuit_diagram', svg)
-        self.svg_to_png(svg)
+        # self.svg_to_png(svg)
 
 class StateMachineExtractor(Tool):
     def __init__(self, sv_code: str):

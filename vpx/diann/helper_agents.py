@@ -444,7 +444,7 @@ output2 = (state == STATE2 || state == STATE3)"""
             self.context.requirements.fsm = fsm_response
         
         combined = "\n\n".join([
-            self.self.context.requirements.module_interface,
+            self.context.requirements.module_interface,
             self.context.requirements.components,
             self.context.requirements.timing,
             self.context.requirements.fsm or ""
@@ -461,7 +461,7 @@ output2 = (state == STATE2 || state == STATE3)"""
         return response
 
 class DesignCoder(Agent):
-    def __init__(self, context: DesignContext, verbose: bool = False, openai_api_key: str = "", anthropic_api_key: str = ""):
+    def __init__(self, context: DesignContext, verbose: bool = False):
         super().__init__(
             system_prompt="You are a digital design engineer specializing in RTL code generation.",
             tools={},
@@ -604,7 +604,7 @@ Then provide ONLY the complete SystemVerilog RTL in <answer> tags.
         return response
 
 class DesignVerifier(Agent):
-    def __init__(self, context: DesignContext, verbose: bool = False, openai_api_key: str = "", anthropic_api_key: str = ""):
+    def __init__(self, context: DesignContext, verbose: bool = False):
         super().__init__(
             system_prompt="You are a digital design verification engineer specializing in timing analysis and verification.",
             tools={},   
@@ -808,12 +808,12 @@ class Diann(Agent):
         self.context = self.planner.analyze_requirements()
         
         # 2. Generate RTL
-        self.coder = DesignCoder(self.context, self.verbose, self.openai_api_key, self.anthropic_api_key)
+        self.coder = DesignCoder(self.context, self.verbose)
         rtl = self.coder.generate_rtl() if self.planner.needs_fsm else self.coder.call_zero_shot()
         self._write_output("rtl_preverified.sv", rtl)
         
         # 3. Verify the design
-        self.verifier = DesignVerifier(self.context, self.verbose, self.openai_api_key, self.anthropic_api_key)
+        self.verifier = DesignVerifier(self.context, self.verbose)
         final_rtl = self.verifier.verify_rtl_timing()
         
         # 4. Save the result

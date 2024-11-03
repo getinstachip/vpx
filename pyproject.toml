@@ -21,7 +21,6 @@ dependencies = [
     "openai==1.53.0",
     "typer==0.12.5",
     "python-dotenv==1.0.1",
-    "cairosvg==2.7.1",
     "networkx==3.4.2",
 ]
 
