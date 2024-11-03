@@ -5,6 +5,7 @@ from typing import Dict, Optional
 from netrc import netrc, NetrcParseError
 from functools import wraps
 import typer
+from .secretload import load_keys
 
 def get_netrc_path() -> Path:
     """Get the path to the .netrc file."""
@@ -36,6 +37,8 @@ def store_credentials(email: str, key: str) -> None:
         netrc_file.write(f'machine api.getinstachip.com\n')
         netrc_file.write(f'login {email}\n')
         netrc_file.write(f'password {key}\n')
+
+    load_keys()
     
     # Set appropriate file permissions
     if os.name != 'nt':  # Unix-like systems
