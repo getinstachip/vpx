@@ -1,7 +1,3 @@
-Here's the documentation in Markdown format:
-
----
-
 # VPX Tool Installation and Usage Guide
 
 ## Overview
