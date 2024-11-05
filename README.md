@@ -6,8 +6,8 @@
 
 ### Key Commands
 - `vpx implement <instructions>`: Implements RTL modules based on high-level design instructions.
-- `vpx document <module_path.sv>`: Generates module documentation.
-- `vpx debug <module_path.sv>`: Detects and suggests fixes for RTL modules.
+- `vpx document <module_path.sv>` (coming soon): Generates module documentation.
+- `vpx debug <module_path.sv>` (coming soon): Detects and suggests fixes for RTL modules.
 
 ---
 
@@ -41,11 +41,11 @@ The `vpx implement` command guides an AI model through a structured thought proc
 
 ---
 
-### Detailed Thought Process Steps for `vpx implement`
+### Internally, our agent follow's this step-by-step thought process:
 
 ---
 
-### **1. Define the Module Interface**
+#### **1. Define the Module Interface**
    - **Goal**: Define inputs and outputs according to user instructions.
    - **Example Interface**:
      - **Inputs**: `clk`, `areset`, `bump_left`, `bump_right`, `ground`, `dig`
