@@ -33,17 +33,18 @@ When prompted, enter:
 - **Your email address**
 - **Your license key**
 
+### Troubleshooting
+
+- **Command Not Found**: Verify `pipx` installation and ensure it’s in your PATH.
+- **Login Issues**: Check that the correct email and license key are used and confirm internet connectivity.
+- **Dependency Issues**: Reinstall VPX using `pipx reinstall vpx` if needed.
 ---
 
 ## Using the `vpx implement` Command
 
 The `vpx implement` command guides an AI model through a structured thought process for RTL design. This breakdown outlines the LLM’s design approach and thought steps for implementing a complex FSM-based module.
 
----
-
 ### Internally, our agent follow's this step-by-step thought process:
-
----
 
 #### **1. Define the Module Interface**
    - **Goal**: Define inputs and outputs according to user instructions.
@@ -51,12 +52,12 @@ The `vpx implement` command guides an AI model through a structured thought proc
      - **Inputs**: `clk`, `areset`, `bump_left`, `bump_right`, `ground`, `dig`
      - **Outputs**: `walk_left`, `walk_right`, `aaah`, `digging`
 
-### **2. Identify and Define Storage Elements (State and Counters)**
+#### **2. Identify and Define Storage Elements (State and Counters)**
    - **State Register**: Define states as an enumerated type or constants.
      - States: `WALK_LEFT`, `WALK_RIGHT`, `FALL_LEFT`, `FALL_RIGHT`, `DIG_LEFT`, `DIG_RIGHT`, `SPLAT`
    - **Counter**: Define `fall_count` to track time in the FALL state. If `fall_count` exceeds 20 cycles, the Lemming transitions to the `SPLAT` state when ground returns.
 
-### **3. Determine Combinational Logic Paths**
+#### **3. Determine Combinational Logic Paths**
    - **Objective**: Define the logic for state transitions and output generation.
    - **Paths**:
      - **State Transition Logic**:
@@ -65,7 +66,7 @@ The `vpx implement` command guides an AI model through a structured thought proc
      - **Output Generation**:
        - `walk_left`, `walk_right`, `aaah`, and `digging` are driven by the current state.
 
-### **4. Timing Diagram Analysis**
+#### **4. Timing Diagram Analysis**
    - **Purpose**: Confirm correct behavior across cycles. The timing diagram below shows the progression of `ground`, `bump_left`, `dig`, `state`, `fall_count`, and outputs:
    ```plaintext
    Clock     |‾|_|‾|_|‾|_|‾|_|‾|_|‾|_|‾|_|
@@ -81,7 +82,7 @@ The `vpx implement` command guides an AI model through a structured thought proc
    digging   |0|0|0|0|0|0|0|0|1|1|0|0|0|0|
    ```
 
-### **5. Compact Finite State Machine (FSM) Representation**
+#### **5. Compact Finite State Machine (FSM) Representation**
 The following ASCII diagram summarizes state transitions and conditions in a compact FSM notation:
 
 ```
@@ -122,13 +123,3 @@ The following ASCII diagram summarizes state transitions and conditions in a com
 When run, `vpx implement` follows these structured steps to reason through the RTL design, producing a well-structured RTL description that meets specified requirements.
 
 ---
-
-## Troubleshooting
-
-- **Command Not Found**: Verify `pipx` installation and ensure it’s in your PATH.
-- **Login Issues**: Check that the correct email and license key are used and confirm internet connectivity.
-- **Dependency Issues**: Reinstall VPX using `pipx reinstall vpx` if needed.
-
----
-
-This streamlined thought process enables the LLM within VPX to generate complex RTL implementations accurately. The `vpx implement` command ensures consistent, logically ordered designs that align with RTL development standards.
