@@ -34,7 +34,7 @@ vpx login
 
 When prompted, enter:
 - **Your email address**
-- **License key**: `b2c3d4e5-f6g7h8i9-j0k1l2m3-n4o5p6q7`
+- **Your license key**
 
 ---
 
