@@ -1,172 +1,137 @@
-# VPX Tool Installation and Usage Guide
-
-## Overview
-**VPX** is a command-line tool for managing RTL (Register Transfer Level) development tasks using AI agents. The tool provides commands for implementing, debugging, and documenting RTL modules. Below are the main commands:
-
-- `vpx implement <instructions>`: Helps implement RTL designs from high-level instructions.
-- `vpx document <module_path.sv>`: Generates documentation for RTL modules.
-- `vpx debug <module_path.sv>`: Detects and suggests fixes for issues in RTL modules.
+Here is the more compact, precise, and integrated documentation for the `vpx implement` command, with Steps 6, 7, and 8 merged into a single FSM representation using ASCII arrows and conditions.
 
 ---
 
-## Prerequisites
+# VPX Tool Installation and Usage Guide
 
-Before installing VPX, ensure you have:
+## Overview
+**VPX** is a command-line tool for RTL (Register Transfer Level) development tasks, leveraging AI to assist with design, debugging, and documentation of RTL modules. VPX enables a structured design approach using the `vpx implement` command to guide an AI model through a systematic thought process.
 
-- **Python 3.8 or newer**
-- **pip** (Python package manager)
-- **Git** (to clone the VPX repository)
-- **Internet Connection** (if VPX uses external AI models)
+### Key Commands
+- `vpx implement <instructions>`: Implements RTL modules based on high-level design instructions.
+- `vpx document <module_path.sv>`: Generates module documentation.
+- `vpx debug <module_path.sv>`: Detects and suggests fixes for RTL modules.
 
 ---
 
 ## Installation Steps
 
-### Step 1: Clone the VPX Repository
+### Step 1: Install VPX Using pipx
 
-Clone the VPX repository using Git:
-
-```bash
-git clone https://github.com/yourorganization/vpx-tool.git
-```
-
-Navigate to the directory:
+To install VPX, use `pipx`, which ensures isolated dependencies. Run:
 
 ```bash
-cd vpx-tool
+pipx install vpx
 ```
 
-### Step 2: Set Up a Virtual Environment (Recommended)
+### Step 2: Log In to VPX
 
-Setting up a virtual environment isolates VPX dependencies.
-
-1. **Create a virtual environment**:
-
-    ```bash
-    python3 -m venv vpx_env
-    ```
-
-2. **Activate the virtual environment**:
-   - **Linux/macOS**: 
-     ```bash
-     source vpx_env/bin/activate
-     ```
-   - **Windows**:
-     ```bash
-     vpx_env\Scripts\activate
-     ```
-
-### Step 3: Install VPX and Its Dependencies
-
-With the virtual environment active, install VPX dependencies:
+Once installed, log in to activate your license:
 
 ```bash
-pip install -r requirements.txt
+vpx login
 ```
 
-### Step 4: Install VPX as a CLI Tool
-
-Install VPX as a local package:
-
-```bash
-pip install -e .
-```
-
-This will make the `vpx` command available in your terminal.
-
-### Step 5: Configure VPX (Optional)
-
-If VPX uses external APIs or custom paths, configure it by editing `config.yaml` or `.env`.
-
-> **Tip**: Consult the `README.md` for additional setup instructions if no config file is present.
+When prompted, enter:
+- **Your email address**
+- **License key**: `b2c3d4e5-f6g7h8i9-j0k1l2m3-n4o5p6q7`
 
 ---
 
-## Usage Guide
+## Using the `vpx implement` Command
 
-Once installed, you can use the following VPX commands:
-
-### Implement Command
-
-The `implement` command generates RTL code from high-level design descriptions.
-
-```bash
-vpx implement <instructions>
-```
-
-**Example**:
-```bash
-vpx implement "Create a 4-bit counter with asynchronous reset and enable"
-```
-
-### Document Command
-
-The `document` command generates documentation for a specified RTL module.
-
-```bash
-vpx document <module_path.sv>
-```
-
-**Example**:
-```bash
-vpx document src/counter_module.sv
-```
-
-The command creates documentation (Markdown or HTML) detailing the module’s inputs, outputs, and functionality.
-
-### Debug Command
-
-The `debug` command checks the specified RTL module for issues and suggests fixes.
-
-```bash
-vpx debug <module_path.sv>
-```
-
-**Example**:
-```bash
-vpx debug src/alu_module.sv
-```
+The `vpx implement` command guides an AI model through a structured thought process for RTL design. This breakdown outlines the LLM’s design approach and thought steps for implementing a complex FSM-based module.
 
 ---
 
-## Additional Notes
+### Detailed Thought Process Steps for `vpx implement`
 
-### Updating VPX
+---
 
-To update VPX, pull the latest changes from the repository:
+### **1. Define the Module Interface**
+   - **Goal**: Define inputs and outputs according to user instructions.
+   - **Example Interface**:
+     - **Inputs**: `clk`, `areset`, `bump_left`, `bump_right`, `ground`, `dig`
+     - **Outputs**: `walk_left`, `walk_right`, `aaah`, `digging`
 
-```bash
-git pull origin main
+### **2. Identify and Define Storage Elements (State and Counters)**
+   - **State Register**: Define states as an enumerated type or constants.
+     - States: `WALK_LEFT`, `WALK_RIGHT`, `FALL_LEFT`, `FALL_RIGHT`, `DIG_LEFT`, `DIG_RIGHT`, `SPLAT`
+   - **Counter**: Define `fall_count` to track time in the FALL state. If `fall_count` exceeds 20 cycles, the Lemming transitions to the `SPLAT` state when ground returns.
+
+### **3. Determine Combinational Logic Paths**
+   - **Objective**: Define the logic for state transitions and output generation.
+   - **Paths**:
+     - **State Transition Logic**:
+       - Uses inputs: `ground`, `bump_left`, `bump_right`, `dig`, and `fall_count`.
+       - **Priority**: FALL has the highest priority, DIG is next, followed by direction changes.
+     - **Output Generation**:
+       - `walk_left`, `walk_right`, `aaah`, and `digging` are driven by the current state.
+
+### **4. Timing Diagram Analysis**
+   - **Purpose**: Confirm correct behavior across cycles. The timing diagram below shows the progression of `ground`, `bump_left`, `dig`, `state`, `fall_count`, and outputs:
+   ```plaintext
+   Clock     |‾|_|‾|_|‾|_|‾|_|‾|_|‾|_|‾|_|
+   ground    |1|1|0|0|0|0|1|1|1|1|1|1|1|1|
+   bump_left |0|0|0|0|0|0|0|1|0|0|0|0|0|0|
+   dig       |0|0|0|0|0|0|0|0|1|1|0|0|0|0|
+   state     |WL|WL|FL|FL|FL|FL|WL|WR|DG|DG|FL|FL|WL|WL|
+   
+   fall_cnt  |0|0|1|2|3|4|0|0|0|0|0|1|0|0|
+   walk_left |1|1|0|0|0|0|1|0|0|0|0|0|1|1|
+   walk_right|0|0|0|0|0|0|0|1|0|0|0|0|0|0|
+   aaah      |0|0|1|1|1|1|0|0|0|0|1|1|0|0|
+   digging   |0|0|0|0|0|0|0|0|1|1|0|0|0|0|
+   ```
+
+### **5. Compact Finite State Machine (FSM) Representation**
+The following ASCII diagram summarizes state transitions and conditions in a compact FSM notation:
+
+```
+          WALK_LEFT ---------- bump_left=1 ----------> WALK_RIGHT
+              |                                         |
+  ground=0    |                                         |   ground=0
+              v                                         v
+          FALL_LEFT <------------ bump_right=1 ------- WALK_RIGHT
+              |                                         |
+   dig=1,     |                                         |   dig=1,
+ ground=1     v                                         | ground=1
+ ------------> DIG_LEFT                               DIG_RIGHT <----------
+              |                                         |                |
+    ground=0  v                                         v ground=0       |
+ ------------ FALL_LEFT <-------- bump_right=1 ------- FALL_RIGHT       SPLAT
+              |                   ground=1, fall_count > 20
+              v
+           SPLAT (All outputs = 0)
 ```
 
-Then, reinstall the package:
+**Transitions**:
+- **FALL**: Occurs if `ground=0` (highest priority).
+- **SPLAT**: Transitions upon ground return if `fall_count > 20`.
+- **DIG**: Transitions when `dig=1` and `ground=1` (overrides direction changes).
+- **Direction Change**: Triggers on `bump_left` or `bump_right` (lowest priority).
 
-```bash
-pip install -e .
-```
+**Outputs**:
+- `walk_left`: Asserted in `WALK_LEFT`.
+- `walk_right`: Asserted in `WALK_RIGHT`.
+- `aaah`: Asserted in `FALL_LEFT` and `FALL_RIGHT`.
+- `digging`: Asserted in `DIG_LEFT` and `DIG_RIGHT`.
+- **SPLAT**: Forces all outputs to zero.
 
-### Uninstalling VPX
+---
 
-To uninstall VPX, deactivate your virtual environment (if active), and run:
+## Example of `vpx implement` in Action
 
-```bash
-pip uninstall vpx
-```
-
-To delete the repository entirely:
-
-```bash
-rm -rf vpx-tool
-```
+When run, `vpx implement` follows these structured steps to reason through the RTL design, producing a well-structured RTL description that meets specified requirements.
 
 ---
 
 ## Troubleshooting
 
-- **Command Not Found**: Check that the virtual environment is activated.
-- **Dependency Errors**: Run `pip install -r requirements.txt` to install missing dependencies.
-- **Permission Issues**: Use `sudo` for permission-related issues on Unix systems.
+- **Command Not Found**: Verify `pipx` installation and ensure it’s in your PATH.
+- **Login Issues**: Check that the correct email and license key are used and confirm internet connectivity.
+- **Dependency Issues**: Reinstall VPX using `pipx reinstall vpx` if needed.
 
 ---
 
-This guide provides the setup and usage instructions needed to get started with VPX. Once installed, you’re ready to leverage VPX's AI-driven RTL design capabilities.
+This streamlined thought process enables the LLM within VPX to generate complex RTL implementations accurately. The `vpx implement` command ensures consistent, logically ordered designs that align with RTL development standards.
