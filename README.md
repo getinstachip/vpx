@@ -46,7 +46,8 @@ The `vpx implement` command guides an AI model through a structured thought proc
 
 ### Command:
 
-`vpm implement
+```
+vpm implement
 
 """I would like you to implement a module named TopModule with the following interface. All input and output ports are one bit unless otherwise specified.
 
@@ -77,6 +78,7 @@ Implement a Moore state machine that models this behaviour. areset is positive e
 
 Assume all sequential logic is triggered on the positive edge of the clock.
 """
+```
 
 ### Internally, our agent follow's this step-by-step thought process:
 
