@@ -1,7 +1,7 @@
 # VPX Tool Installation and Usage Guide
 
 ## Overview
-**VPX** is a command-line tool for RTL (Register Transfer Level) development tasks, leveraging AI to assist with design, debugging, and documentation of RTL modules. VPX enables a structured design approach using the `vpx implement` command to guide an AI model through a systematic thought process.
+**VPX** is a command-line tool that leverages state-of-the-art (SOTA) AI agents to assist with design, debugging, and documentation of RTL modules. 
 
 ### Key Commands
 - `vpx implement <instructions>`: Implements RTL modules based on high-level design instructions.
@@ -87,8 +87,17 @@ The `MAC8` module performs multiply-accumulate operations on two 8-bit inputs (`
    - P1: First product (A1*B1)
    - S1, S2: Accumulated sums
    ```
-
-4. **Final RTL Code**
+4. Register Update Order
+   - Execution Sequence:
+      1. Clear: Clear `acc_reg` if clear=1.
+      2. Sample Inputs: Capture new `a` and `b` values in `a_reg` and `b_reg` if `en=1`.
+      3. Multiply: Calculate product = `a_reg * b_reg` (combinational).
+      4. Accumulate: Add product to `acc_reg` on the next clock edge.
+   - Critical Timing Rules:
+      1. `en=1` enables register updates; `clear=1` takes precedence.
+      2. Accumulator and inputs update in sync with `clk`.
+         
+5. **Final RTL Code**
    ```systemverilog
    module MAC8 (
        input  wire        clk,
