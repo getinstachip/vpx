@@ -1,7 +1,3 @@
-Here is the complete, fully integrated documentation for VPX with the `vpx implement` command examples and detailed thought processes.
-
----
-
 # VPX Tool Installation and Usage Guide
 
 ## Overview
