@@ -1,6 +1,3 @@
-Here is the more compact, precise, and integrated documentation for the `vpx implement` command, with Steps 6, 7, and 8 merged into a single FSM representation using ASCII arrows and conditions.
-
----
 
 # VPX Tool Installation and Usage Guide
 
