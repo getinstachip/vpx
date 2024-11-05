@@ -89,7 +89,7 @@ The `MAC8` module performs multiply-accumulate operations on two 8-bit inputs (`
    ```
 4. Register Update Order
    - Execution Sequence:
-      1. Clear: Clear `acc_reg` if clear=1.
+      1. Clear: Clear `acc_reg` if `clear=1`.
       2. Sample Inputs: Capture new `a` and `b` values in `a_reg` and `b_reg` if `en=1`.
       3. Multiply: Calculate product = `a_reg * b_reg` (combinational).
       4. Accumulate: Add product to `acc_reg` on the next clock edge.
