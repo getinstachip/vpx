@@ -191,35 +191,34 @@ class Agent:
         user_input: str,
         provider: str = "openai",
         model: str = "o1-mini",
-        json_response: bool = False,
-        xml_response: bool = False,
-        output_file: str = None,
         temperature: float = 1.0,
-        k: int = 1,
-        streaming: bool = False,
-        xml_tag: str = None,
-        prefill: List[Dict[str, str]] = None
-    ) -> Union[str, List[str]]:
-        self._add_message("user", user_input)
-        message = {"role": "user", "content": user_input} if not self.log_history else None
-        self.output_file = output_file
-        if streaming and output_file:
-            open(output_file, 'w').close()  # Clear the file before streaming
-        response = self._get_response(
-            provider=provider, 
-            model=model, 
-            temperature=temperature, 
-            message=message, 
-            k=k, 
-            streaming=streaming, 
-            xml_tag=xml_tag,
-            prefill=prefill
-        )
-        
-        if k == 1:
-            return self._process_single_response(response, json_response, xml_response, output_file)
-        else:
-            return self._process_multiple_responses(response, json_response, xml_response, output_file)
+    ) -> str:
+        """Simple chat interface that returns a string response"""
+        try:
+            if provider == "openai":
+                response = self.openai_client.chat.completions.create(
+                    model=model,
+                    messages=[{"role": "user", "content": user_input}],
+                    temperature=temperature
+                )
+                return response.choices[0].message.content
+                
+            elif provider == "anthropic":
+                response = self.anthropic_client.messages.create(
+                    model=model,
+                    messages=[{"role": "user", "content": user_input}],
+                    temperature=temperature,
+                    max_tokens=8192
+                )
+                return response.content[0].text
+                
+            else:
+                raise ValueError(f"Unsupported provider: {provider}")
+                
+        except Exception as e:
+            if self.verbose:
+                print(f"Error in chat: {str(e)}")
+            return ""
 
     def _process_single_response(self, response: str, json_response: bool, xml_response: bool, output_file: str) -> str:
         cleaned_response = self._clean_response(response, json_response)
