@@ -4,9 +4,8 @@
 **VPX** is a command-line tool that leverages state-of-the-art (SOTA) AI agents to assist with design, debugging, and documentation of RTL modules. 
 
 ### Key Commands
+- `vpx verify [*.sv files]`: Identifies functional bugs in a SystemVerilog module hierarchy through testbenches
 - `vpx implement <instructions>`: Implements RTL modules based on high-level design instructions.
-- `vpx document <module_path.sv>` (coming soon): Generates module documentation.
-- `vpx debug <module_path.sv>` (coming soon): Detects and suggests fixes for RTL modules.
 
 ---
 
@@ -252,5 +251,3 @@ The `vpx debug` command will offer debugging tools, including logic cone analysi
 Coming soon.
 
 --- 
-
-This documentation provides a comprehensive overview of VPX, guiding users through installation, setup, and the use of the `vpx implement` command with clear design examples and detailed thought processes.
